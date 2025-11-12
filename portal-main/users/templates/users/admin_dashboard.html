@@ -1,0 +1,222 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="{% static 'css/lecturer_dashboard.css' %}?v=1">
+</head>
+
+<body>
+    <div class="dashboard-wrapper">
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-section">
+                    <span class="logo-icon">🎓</span>
+                    <span class="logo-text">CLUB MS</span>
+                </div>
+            </div>
+
+            <div class="user-profile">
+                {% if user.profile.avatar %}
+                <img src="{{ user.profile.avatar.url }}" alt="{{ user.profile.name }}" class="sidebar-avatar">
+                {% else %}
+                <img src="{% static 'images/default-avatar.png' %}" alt="Default Avatar" class="sidebar-avatar">
+                {% endif %}
+                <h3>{{ user.profile.name }}</h3>
+                <p class="sidebar-role" style="color: #e74c3c;">{{ user.profile.role|title }}</p>
+            </div>
+
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="{% url 'admin_dashboard' %}" class="active"><span class="nav-icon">🏠</span>
+                            Dashboard</a></li>
+                    <li><a href="{% url 'manage_clubs' %}"><span class="nav-icon">🏛</span> Manage Clubs</a></li>
+                    <li><a href="{% url 'manage_users' %}"><span class="nav-icon">👥</span> Manage Users</a></li>
+                    <li><a href="{% url 'manage_posts' %}"><span class="nav-icon">📝</span> Manage Posts</a></li>
+                    <li><a href="{% url 'system_reports' %}"><span class="nav-icon">📊</span> System Reports</a></li>
+                    <li><a href="{% url 'admin_settings' %}"><span class="nav-icon">⚙️</span> Settings</a></li>
+
+                    <li>
+                        <form id="logout-form" action="{% url 'logout' %}" method="post" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="sidebar-link-btn">
+                                <span class="nav-icon">🚪</span> Logout
+                            </button>
+                        </form>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Dashboard Content -->
+        <main class="dashboard-main">
+            <!-- Top Header Bar -->
+            <header class="top-header">
+                <div class="header-left">
+                    <button class="menu-toggle">☰</button>
+                    <h1 class="page-title">Admin Dashboard</h1>
+                </div>
+                <div class="header-right">
+                    <button class="settings-btn">⚙️</button>
+                </div>
+            </header>
+
+            <div class="dashboard-content">
+                <!-- Breadcrumb -->
+                <div class="breadcrumb">
+                    <span>Admin</span>
+                    <span class="separator">></span>
+                    <span class="current">Dashboard</span>
+                </div>
+
+                <!-- Page Header with Stats -->
+                <div class="page-header">
+                    <div class="header-content">
+                        <h1>👋 Welcome, {{ user.profile.name }}</h1>
+                        <p>Full system management and administrative controls</p>
+                    </div>
+                    <div class="header-stats">
+                        <div class="stat-badge" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                            <span class="stat-number">{{ total_users|default:0 }}</span>
+                            <span class="stat-label">Total Users</span>
+                        </div>
+                        <div class="stat-badge" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                            <span class="stat-number">{{ total_clubs|default:0 }}</span>
+                            <span class="stat-label">Total Clubs</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dashboard Stats Cards -->
+                <section class="stats-grid">
+                    <div class="stat-card card-blue">
+                        <div class="stat-content">
+                            <h3>Total Users</h3>
+                            <p class="stat-number">{{ total_users|default:0 }}</p>
+                        </div>
+                        <div class="stat-icon">👥</div>
+                        <a href="#" class="stat-link">Manage users →</a>
+                    </div>
+
+                    <div class="stat-card card-green">
+                        <div class="stat-content">
+                            <h3>Total Clubs</h3>
+                            <p class="stat-number">{{ total_clubs|default:0 }}</p>
+                        </div>
+                        <div class="stat-icon">🏛</div>
+                        <a href="{% url 'manage_clubs' %}" class="stat-link">Manage clubs →</a>
+                    </div>
+
+                    <div class="stat-card card-yellow">
+                        <div class="stat-content">
+                            <h3>Total Events</h3>
+                            <p class="stat-number">{{ total_events|default:0 }}</p>
+                        </div>
+                        <div class="stat-icon">📅</div>
+                        <a href="#" class="stat-link">View events →</a>
+                    </div>
+
+                    <div class="stat-card card-purple">
+                        <div class="stat-content">
+                            <h3>Total Posts</h3>
+                            <p class="stat-number">{{ total_posts|default:0 }}</p>
+                        </div>
+                        <div class="stat-icon">📝</div>
+                        <a href="#" class="stat-link">Manage posts →</a>
+                    </div>
+                </section>
+
+                <!-- Admin Quick Actions -->
+                <section class="panel">
+                    <div class="panel-header">
+                        <h2>Admin Quick Actions</h2>
+                        <div class="panel-actions">
+                            <button class="panel-toggle">−</button>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <div class="dashboard-cards">
+                            <div class="dashboard-card">
+                                <h3>🏛 Manage Clubs</h3>
+                                <p>Create, edit, delete clubs and manage club settings.</p>
+                                <a href="{% url 'manage_clubs' %}" class="btn btn-primary">Manage Clubs</a>
+                            </div>
+
+                            <div class="dashboard-card">
+                                <h3>👥 Manage Users</h3>
+                                <p>View all users, manage roles, and user permissions.</p>
+                                <a href="#" class="btn btn-success">Manage Users</a>
+                            </div>
+
+                            <div class="dashboard-card">
+                                <h3>📝 Manage Posts</h3>
+                                <p>Moderate club posts and announcements across the system.</p>
+                                <a href="#" class="btn btn-warning">Manage Posts</a>
+                            </div>
+
+                            <!-- ✅ SYSTEM REPORTS CARD -->
+                            <div class="dashboard-card admin-reports" id="system-reports">
+                                <h3>📊 Reports</h3>
+                                <form action="{% url 'generate_report' %}" method="post" style="display:inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-primary">Generate Clubs Report</button>
+                                </form>
+
+                                <form action="{% url 'download_report' %}" method="get" style="display:inline;">
+                                    <button type="submit" class="btn btn-success">Download Latest Report</button>
+                                </form>
+                            </div>
+
+                            <div class="dashboard-card">
+                                <h3>⚙️ System Settings</h3>
+                                <p>Configure system-wide settings and preferences.</p>
+                                <a href="#" class="btn">Settings</a>
+                            </div>
+
+                            <div class="dashboard-card">
+                                <h3>🗑️ Delete Content</h3>
+                                <p>Remove inappropriate content and manage deletions.</p>
+                                <a href="#" class="btn" style="background: #e74c3c; color: white;">Moderation</a>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Panel toggle functionality
+        document.querySelectorAll('.panel-toggle').forEach(btn => {
+            btn.addEventListener('click', function () {
+                const panel = this.closest('.panel');
+                const body = panel.querySelector('.panel-body');
+                body.style.display = body.style.display === 'none' ? 'block' : 'none';
+                this.textContent = body.style.display === 'none' ? '+' : '−';
+            });
+        });
+
+        // Menu toggle for mobile
+        document.querySelector('.menu-toggle')?.addEventListener('click', function () {
+            document.querySelector('.sidebar').classList.toggle('sidebar-open');
+        });
+
+        // Smooth scroll for sidebar links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
