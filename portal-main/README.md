@@ -24,7 +24,7 @@ This is a Django-based web application for managing student projects, with a mob
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/Emmanuel-Kenyi/portal
+   git clone https://github.com/Bruzzzz/Hperloop
    cd portal
    ```
 
